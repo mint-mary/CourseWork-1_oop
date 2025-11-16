@@ -40,8 +40,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             this.x += this.velocityX;
             this.y += this.velocityY;
             
-            // Використовуємо перевірку лише на стіни, оскільки повна перевірка для Pacman
-            // відбувається у методі move() після обробки введення
+           
             for (Block wall : walls) {
                 if (collision(this, wall)) {
                     this.x -= this.velocityX;
@@ -95,7 +94,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     private Image pacmanRightImage;
 
     
-    // ОНОВЛЕНО: Цілі для рівнів
+ 
     int currentLevel = 1; 
     int[] levelScoreGoals = {0, 500, 800, 1000}; 
     boolean gameWon = false; 
@@ -132,7 +131,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     Block pacman;
 
     Timer gameLoop;
-    char[] directions = {'U', 'D', 'L', 'R'}; //up down left right
+    char[] directions = {'U', 'D', 'L', 'R'}; 
     Random random = new Random();
     int score = 0;
     int lives = 3;
@@ -145,26 +144,24 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         addKeyListener(this);
         setFocusable(true);
 
-        //load images
-        wallImage = new ImageIcon(getClass().getResource("./wall.png")).getImage();
-        blueGhostImage = new ImageIcon(getClass().getResource("./blueGhost.png")).getImage();
-        orangeGhostImage = new ImageIcon(getClass().getResource("./orangeGhost.png")).getImage();
-        pinkGhostImage = new ImageIcon(getClass().getResource("./pinkGhost.png")).getImage();
-        redGhostImage = new ImageIcon(getClass().getResource("./redGhost.png")).getImage();
+        wallImage = new ImageIcon(getClass().getResource("imgs/wall.png")).getImage();
+        blueGhostImage = new ImageIcon(getClass().getResource("imgs/blueGhost.png")).getImage();
+        orangeGhostImage = new ImageIcon(getClass().getResource("imgs/orangeGhost.png")).getImage();
+        pinkGhostImage = new ImageIcon(getClass().getResource("imgs/pinkGhost.png")).getImage();
+        redGhostImage = new ImageIcon(getClass().getResource("imgs/redGhost.png")).getImage();
 
-        pacmanUpImage = new ImageIcon(getClass().getResource("./pacmanUp.png")).getImage();
-        pacmanDownImage = new ImageIcon(getClass().getResource("./pacmanDown.png")).getImage();
-        pacmanLeftImage = new ImageIcon(getClass().getResource("./pacmanLeft.png")).getImage();
-        pacmanRightImage = new ImageIcon(getClass().getResource("./pacmanRight.png")).getImage();
+        pacmanUpImage = new ImageIcon(getClass().getResource("imgs/pacmanUp.png")).getImage();
+        pacmanDownImage = new ImageIcon(getClass().getResource("imgs/pacmanDown.png")).getImage();
+        pacmanLeftImage = new ImageIcon(getClass().getResource("imgs/pacmanLeft.png")).getImage();
+        pacmanRightImage = new ImageIcon(getClass().getResource("imgs/pacmanRight.png")).getImage();
 
         loadMap();
         for (Block ghost : ghosts) {
             char newDirection = directions[random.nextInt(4)];
             ghost.updateDirection(newDirection);
         }
-        //how long it takes to start timer, milliseconds gone between frames
-        gameLoop = new Timer(50, this); //20fps (1000/50)
-        // gameLoop.start(); // Запуск перенесено в App.java або loadGame()
+        gameLoop = new Timer(50, this); 
+        
     }
 
     public void loadMap() {
@@ -172,7 +169,6 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         foods = new HashSet<Block>();
         ghosts = new HashSet<Block>();
 
-        // Load initial map elements (walls, food, and base ghosts)
         for (int r = 0; r < rowCount; r++) {
             for (int c = 0; c < columnCount; c++) {
                 String row = tileMap[r];
@@ -181,7 +177,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
                 int x = c*tileSize;
                 int y = r*tileSize;
 
-                // ... (Wall and Food loading remains the same) ...
+               
                 if (tileMapChar == 'X') { //block wall
                     Block wall = new Block(wallImage, x, y, tileSize, tileSize);
                     walls.add(wall);
@@ -212,28 +208,19 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-        // --- NEW DIFFICULTY SCALING: Adding extra ghosts ---
+        int ghostStartX = 9 * tileSize; 
+        int ghostStartY = 10 * tileSize; 
 
-        int ghostStartX = 9 * tileSize; // Central column for spawning
-        int ghostStartY = 10 * tileSize; // Central row for spawning (Ghost House area)
-
-        // Calculate how many extra ghosts to add
-        // Level 1: 0 extra (total 4 base ghosts)
-        // Level 2: 1 extra (total 5 ghosts)
-        // Level 3: 2 extra (total 6 ghosts)
         int extraGhosts = currentLevel - 1; 
 
-        // Define images for the extra ghosts (we'll cycle through the existing images)
         Image[] ghostImages = {blueGhostImage, orangeGhostImage, pinkGhostImage, redGhostImage};
         int imageIndex = 0;
 
         for (int i = 0; i < extraGhosts; i++) {
-            // Use a different image each time
+
             Image imageToAdd = ghostImages[imageIndex % ghostImages.length]; 
             imageIndex++;
 
-            // Shift the starting position slightly so they don't spawn directly on top of each other
-            // This makes them start slightly staggered within the ghost house.
             int spawnX = ghostStartX + (i * tileSize / 4);
         
             Block newGhost = new Block(imageToAdd, spawnX, ghostStartY, tileSize, tileSize);
@@ -261,14 +248,14 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
         for (Block food : foods) {
             g.fillRect(food.x, food.y, food.width, food.height);
         }
-        //score and lives
+        // Відображення рахунку та життів
         g.setFont(new Font("Arial", Font.PLAIN, 18));
         
         g.setColor(Color.WHITE);
-        // Combined stats line (Level, Lives, Score)
+
         g.drawString("Level: " + String.valueOf(currentLevel) + " | x" + String.valueOf(lives) + " Score: " + String.valueOf(score), tileSize/2, tileSize/2);
         
-        // Instructions
+        // Інструкції
         g.setFont(new Font("Arial", Font.PLAIN, 12));
         g.drawString("SPACE=Pause | S=Save | L=Load", tileSize/2, boardHeight - 10);
 
@@ -284,7 +271,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             g.drawString("VICTORY!", boardWidth/2 - 90, boardHeight/2);
             g.drawString("FINAL SCORE: " + String.valueOf(score), boardWidth/2 - 140, boardHeight/2 + 40);
         }
-        else if (gamePaused) { // Draw pause message
+        else if (gamePaused) { 
             g.setColor(Color.YELLOW);
             g.setFont(new Font("Arial", Font.BOLD, 40));
             g.drawString("PAUSED", boardWidth/2 - 70, boardHeight/2);
@@ -294,7 +281,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
     }
 
     public void move() {
-        // 1. Рух Pac-Man та обробка зіткнень зі стінами та кордонами
+        // Рух Pac-Man 
         pacman.x += pacman.velocityX;
         pacman.y += pacman.velocityY;
 
@@ -308,7 +295,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-        // ПОВНА Перевірка кордонів вікна (для запобігання виходу за межі)
+        // Перевірка кордонів вікна (для запобігання виходу за межі)
         if (pacman.x < 0 || 
             pacman.x + pacman.width > boardWidth ||
             pacman.y < 0 ||
@@ -321,14 +308,14 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             // Відкочуємо рух
             pacman.x -= pacman.velocityX;
             pacman.y -= pacman.velocityY;
-            // Pacman stops if hits wall or boundary
+            // Pacman зупиняється при зіткненні
             pacman.velocityX = 0;
             pacman.velocityY = 0;
         }
 
-        // 2. Рух привидів
+        // Рух привидів
         for (Block ghost : ghosts) {
-            // Перевірка тунелю (залишимо оригінальну логіку, якщо вона потрібна)
+            // Перевірка тунелю 
             if (ghost.y == tileSize*9 && ghost.direction != 'U' && ghost.direction != 'D') {
                 ghost.updateDirection('U');
             }
@@ -336,7 +323,6 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             ghost.x += ghost.velocityX;
             ghost.y += ghost.velocityY;
 
-            // Прапорець для перевірки, чи потрібна зміна напрямку
             boolean ghostHitBoundary = false;
 
             // Перевірка зіткнень зі стінами
@@ -347,7 +333,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
                 }
             }
             
-            // ПОВНА Перевірка кордонів вікна для привидів
+            // Перевірка кордонів вікна для привидів
             if (ghost.x <= 0 || 
                 ghost.x + ghost.width >= boardWidth || 
                 ghost.y <= 0 || 
@@ -367,7 +353,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-        // 3. Зіткнення Pac-Man з привидами
+        // Зіткнення Pac-Man з привидами
         for (Block ghost : ghosts) {
             if (collision(pacman, ghost)) {
                 lives--;
@@ -381,7 +367,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             }
         }
 
-         // 4. Зіткнення Pac-Man з їжею
+         // Зіткнення Pac-Man з їжею
         Block foodEaten = null;
         for (Block food : foods) {
             if (collision(pacman, food)) {
@@ -391,7 +377,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
        }
         foods.remove(foodEaten);
 
-        // 5. ЛОГІКА ПЕРЕХОДУ НА РІВЕНЬ (За рахунком)
+        // Логіка переходу на наступний рівень
        if (score >= levelScoreGoals[currentLevel]) {
             currentLevel++; 
         
@@ -405,7 +391,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             return; 
         }
 
-        // 6. ЛОГІКА ПЕРЕЗАПУСКУ РІВНЯ (Якщо вся їжа з'їдена, але рахунок недостатній)
+        // Логіка перезавантаження мапи, якщо вся їжа з'їдена
         if (foods.isEmpty()) {
             loadMap();
             resetPositions();
@@ -450,7 +436,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {
-        // Обробка Game Over/Restart
+        // Обробка Game Over
         if (gameOver) {
             loadMap();
             resetPositions();
@@ -559,20 +545,20 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
             String[] data = line.split(",");
             int index = 0;
 
-            // 1. Завантаження основного стану
+            // Завантаження основного стану
             currentLevel = Integer.parseInt(data[index++]);
             score = Integer.parseInt(data[index++]);
             lives = Integer.parseInt(data[index++]);
         
             loadMap(); // Перезавантажуємо мапу
         
-            // 2. Завантаження позиції Pac-Man
+            // Завантаження позиції Pac-Man
             int pacmanX = Integer.parseInt(data[index++]);
             int pacmanY = Integer.parseInt(data[index++]);
             pacman.x = pacmanX;
             pacman.y = pacmanY;
         
-            // 3. Завантаження позицій привидів та ІНІЦІАЛІЗАЦІЯ ШВИДКОСТІ
+            // Завантаження позицій привидів
             for (Block ghost : ghosts) {
                 int ghostX = Integer.parseInt(data[index++]);
                 int ghostY = Integer.parseInt(data[index++]);
@@ -584,7 +570,7 @@ public class PacMan extends JPanel implements ActionListener, KeyListener {
                 ghost.updateDirection(newDirection); 
             }
 
-            // 4. Завантаження стану їжі
+            // Завантаження стану їжі
             int foodCount = Integer.parseInt(data[index++]);
             HashSet<Block> newFoods = new HashSet<>();
             for (int i = 0; i < foodCount; i++) {

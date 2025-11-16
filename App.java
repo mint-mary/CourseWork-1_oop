@@ -20,7 +20,6 @@ public class App {
         pacmanGame.requestFocus();
         frame.setVisible(true);
 
-        // Optional: Ask player if they want to load a game at startup
         int dialogResult = javax.swing.JOptionPane.showConfirmDialog(
             frame, 
             "Do you want to load the last saved game?", 
@@ -30,7 +29,6 @@ public class App {
         if (dialogResult == javax.swing.JOptionPane.YES_OPTION) {
             pacmanGame.loadGame();
         } else {
-            // If starting a new game, make sure the loop is running and state is correct
             pacmanGame.gameLoop.start(); 
         }
     }
